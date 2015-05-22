@@ -14,8 +14,10 @@ public class Pixel {
     public float R, G, B;
     public int counter;
     
-    public Pixel() {
-        R = G = B = 0;
+    public Pixel(float R, float G, float B) {
+        this.R = R;
+        this.G = G;
+        this.B = B;
         counter = 0;
     }
     
