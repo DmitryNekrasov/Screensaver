@@ -27,7 +27,7 @@ public class Screensaver extends ApplicationAdapter {
         Pixel[][] pixels;
 	
 	@Override
-	public void create () {
+	public void create() {
                 sr = new ShapeRenderer();
 		batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");
@@ -42,8 +42,8 @@ public class Screensaver extends ApplicationAdapter {
                     float d = (float) Math.random() * 2 - 1;
                     float e = (float) Math.random() * 2 - 1;
                     
-                    float c = (float) Math.random();
-                    float f = (float) Math.random();
+                    float c = (float) Math.random() * 2 - 1;
+                    float f = (float) Math.random() * 2 - 1;
                     
                     float R = (float) Math.random();
                     float G = (float) Math.random();
@@ -66,7 +66,7 @@ public class Screensaver extends ApplicationAdapter {
 	}
 
 	@Override
-	public void render () {
+	public void render() {
                 Gdx.gl.glClearColor(0.01f, 0.01f, 0.01f, 1);
                 Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
                 sr.setAutoShapeType(true);
@@ -97,12 +97,16 @@ public class Screensaver extends ApplicationAdapter {
 //                    newX = (float) Math.sin(x);
 //                    newY = (float) Math.sin(y);
                     
-                    newX = x;
-                    newY = y;
+//                    newX = x;
+//                    newY = y;
+                    
+                    Point point = Spiral(x, y);
+                    newX = point.x;
+                    newY = point.y;
                     
                     if (step >= 0) {
 
-                        int x1 = (int) (Trunc(((XMAX - newX) / (XMAX - XMIN)) * xRes));
+                        int x1 = (int) (xRes - Trunc(((XMAX - newX) / (XMAX - XMIN)) * xRes));
                         int y1 = (int) (Trunc(((YMAX - newY) / (YMAX - YMIN)) * yRes));
                         if(x1 < xRes && y1 < yRes && x1 >= 0 && y1 >= 0) {
 //                                System.err.println("qqq " + cnt++);
@@ -114,6 +118,8 @@ public class Screensaver extends ApplicationAdapter {
                                 pixels[x1][y1].B = (pixels[x1][y1].B + cf.get(i).B) / 2;
                             }
                             pixels[x1][y1].counter++;
+                        } else {
+                            --step;
                         }
                     }
                     
@@ -157,6 +163,14 @@ public class Screensaver extends ApplicationAdapter {
                     
                 }
             
+        }
+        
+        Point Spiral(float x, float y) {
+            float teta = (float) Math.atan(x / y);
+            float r = (float) Math.sqrt(x * x + y * y);
+            float newX = (float) (Math.cos(teta) + Math.sin(r)) / r;
+            float newY = (float) (Math.sin(teta) - Math.cos(r)) / r;
+            return new Point(newX, newY);
         }
         
 }
