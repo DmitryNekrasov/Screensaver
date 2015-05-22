@@ -13,6 +13,7 @@ public class Pixel {
     
     public float R, G, B;
     public int counter;
+    public float normal;
     
     public Pixel(float R, float G, float B) {
         this.R = R;

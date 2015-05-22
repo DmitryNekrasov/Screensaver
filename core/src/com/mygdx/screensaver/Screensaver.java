@@ -18,9 +18,9 @@ public class Screensaver extends ApplicationAdapter {
         final float XMIN = -1.5f, XMAX = 1.5f;
         final float YMIN = -1f, YMAX = 1f;
         
-        final int n = 3;
-        final int countCoefficient = 10;
-        final int it = 100000;
+        final int n = 5;
+        final int countCoefficient = 20;
+        final int it = 1000000;
         final int xRes = 1440, yRes = 900;        
         
         ArrayList<Coefficient> cf;
@@ -42,8 +42,8 @@ public class Screensaver extends ApplicationAdapter {
                     float d = (float) Math.random() * 2 - 1;
                     float e = (float) Math.random() * 2 - 1;
                     
-                    float c = (float) Math.random() * 2;
-                    float f = (float) Math.random() * 2;
+                    float c = (float) Math.random();
+                    float f = (float) Math.random();
                     
                     float R = (float) Math.random();
                     float G = (float) Math.random();
@@ -76,7 +76,7 @@ public class Screensaver extends ApplicationAdapter {
                     for (int j = 0; j < yRes; j++) {
                         if (pixels[i][j] != null) {
                             sr.setColor(new Color(pixels[i][j].R, pixels[i][j].G, pixels[i][j].B, 1f));
-                            sr.circle(i, j, 0.5f);
+                            sr.point(i, j, 0);
                         }
                     }
                 }
@@ -97,14 +97,14 @@ public class Screensaver extends ApplicationAdapter {
 //                    newX = (float) Math.sin(x);
 //                    newY = (float) Math.sin(y);
                     
-                    newX = x * 1.1f;
+                    newX = x;
                     newY = y;
                     
                     if (step >= 0) {
 
                         int x1 = (int) (Trunc(((XMAX - newX) / (XMAX - XMIN)) * xRes));
                         int y1 = (int) (Trunc(((YMAX - newY) / (YMAX - YMIN)) * yRes));
-                        if(x1 < xRes && y1 < yRes && x1 >= 0 && y1 >= 0 && newX >= XMIN && newX <= XMAX && newY >= YMIN && newY <= YMAX) {
+                        if(x1 < xRes && y1 < yRes && x1 >= 0 && y1 >= 0) {
 //                                System.err.println("qqq " + cnt++);
                             if (pixels[x1][y1] == null) {
                                 pixels[x1][y1] = new Pixel(cf.get(i).R, cf.get(i).G, cf.get(i).B);
@@ -119,6 +119,8 @@ public class Screensaver extends ApplicationAdapter {
                     
                 }
             }
+            
+            correction();
         }
         
         public static Random random = new Random();
@@ -128,6 +130,33 @@ public class Screensaver extends ApplicationAdapter {
         
         public float Trunc(float a) {
             return a;
+        }
+        
+        void correction() {
+            float max = 0f;
+            float gamma = 2.2f;
+            
+            for (int i = 0; i < xRes; i++)
+                for (int j = 0; j < yRes; j++) {
+                    if (pixels[i][j] != null) {
+                        pixels[i][j].normal = (float) Math.log10(pixels[i][j].counter);
+                        if (pixels[i][j].normal > max) {
+                            max = pixels[i][j].normal;
+                        }
+                    }
+                }
+            
+            for (int i = 0; i < xRes; i++)
+                for (int j = 0; j < yRes; j++) {
+                    if (pixels[i][j] != null) {
+                        pixels[i][j].normal /= max;
+                        pixels[i][j].R = (float) (pixels[i][j].R * Math.pow(pixels[i][j].normal, 1.0 / gamma));
+                        pixels[i][j].G = (float) (pixels[i][j].G * Math.pow(pixels[i][j].normal, 1.0 / gamma));
+                        pixels[i][j].B = (float) (pixels[i][j].B * Math.pow(pixels[i][j].normal, 1.0 / gamma));
+                    }
+                    
+                }
+            
         }
         
 }
